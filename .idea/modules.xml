@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/ML Kit Vision Quickstart.iml" filepath="$PROJECT_DIR$/ML Kit Vision Quickstart.iml" group="ML Kit Vision Quickstart" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="ML Kit Vision Quickstart/app" />
+      <module fileurl="file://$PROJECT_DIR$/Face Gender-Exp-Age.iml" filepath="$PROJECT_DIR$/Face Gender-Exp-Age.iml" group="Face Gender-Exp-Age" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="Face Gender-Exp-Age/app" />
     </modules>
   </component>
 </project>

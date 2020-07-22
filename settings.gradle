@@ -1,2 +1,2 @@
-rootProject.name='ML Kit Vision Quickstart'
+rootProject.name='Face Gender-Exp-Age'
 include ':app'

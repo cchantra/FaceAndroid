@@ -45,14 +45,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
+
 import android.widget.ToggleButton;
 
 import com.google.android.gms.common.annotation.KeepName;
-import com.google.mlkit.common.model.LocalModel;
+
 import com.google.mlkit.vision.demo.facedetector.FaceDetectorProcessor;
-import com.google.mlkit.vision.demo.labeldetector.LabelDetectorProcessor;
-import com.google.mlkit.vision.demo.objectdetector.ObjectDetectorProcessor;
+
 import com.google.mlkit.vision.demo.preference.PreferenceUtils;
 import com.google.mlkit.vision.demo.preference.SettingsActivity;
 import com.google.mlkit.vision.demo.preference.SettingsActivity.LaunchSource;
@@ -61,10 +60,7 @@ import com.google.mlkit.vision.demo.tflite.Classifier;
 import com.google.mlkit.vision.demo.tflite.EmotionClassifier;
 import com.google.mlkit.vision.demo.tflite.GenderClassifier;
 import com.google.mlkit.vision.face.FaceDetectorOptions;
-import com.google.mlkit.vision.label.custom.CustomImageLabelerOptions;
-import com.google.mlkit.vision.label.defaults.ImageLabelerOptions;
-import com.google.mlkit.vision.objects.custom.CustomObjectDetectorOptions;
-import com.google.mlkit.vision.objects.defaults.ObjectDetectorOptions;
+
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -339,61 +335,7 @@ public final class LivePreviewActivity extends AppCompatActivity
          mode.setMode(Constant.FACE_OPTION);
 
  }
-/*
-    private void performAnalysis(String model)
-    {
-        try {
-            switch (model) {
 
-
-                case FACE_GENDER:
-                    Log.i(TAG, "Custom Gender Detector Processor");
-
-                    if (classifier != null) {
-                        final long startTime = SystemClock.uptimeMillis();
-                        final List<Classifier.Recognition> results =
-                                classifier.recognizeImage(rgbFrameBitmap, sensorOrientation);
-                        long lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime;
-                        LOGGER.v("Detect: %s", results);
-                        System.out.println(results);
-
-                        runOnUiThread(
-                                new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        showResultsInBottomSheet(results);
-                                        //showFrameInfo(previewWidth + "x" + previewHeight);
-                                        //showCropInfo(imageSizeX + "x" + imageSizeY);
-                                        //showCameraResolution(cropSize + "x" + cropSize);
-                                        //showRotationInfo(String.valueOf(sensorOrientation));
-                                        //showInference(lastProcessingTimeMs + "ms");
-                                    }
-                                });
-                    }
-
-                    LocalModel localClassifier_age =
-                            new LocalModel.Builder()
-                                    .setAssetFilePath("custom_models/face_age_classifier.tflite")
-                                    .build();
-                    CustomImageLabelerOptions customImageLabelerOptions =
-                            new CustomImageLabelerOptions.Builder(localClassifier_age).build();
-
-                    mode.setMode(Constant.GENDER_OPTION);
-                    cameraSource.setMachineLearningFrameProcessor(
-                            new LabelDetectorProcessor(this, customImageLabelerOptions));
-                    break;
-
-            }
-
-         } catch (Exception e) {
-            Log.e(TAG, "Can not create image processor: " + model, e);
-            Toast.makeText(
-                    getApplicationContext(),
-                    "Can not create image processor: " + e.getMessage(),
-                    Toast.LENGTH_LONG)
-                    .show();
-        }
-    } */
 
     protected int getScreenOrientation() {
         switch (getWindowManager().getDefaultDisplay().getRotation()) {
@@ -407,180 +349,6 @@ public final class LivePreviewActivity extends AppCompatActivity
                 return 0;
         }
     }
-
-    /*
-    private void createCameraSource(String model) {
-        // If there's no existing cameraSource, create one.
-        if (cameraSource == null) {
-
-
-            cameraSource  = new CameraSource(this, graphicOverlay);
-
-        }
-
-        try {
-            switch (model) {
-                case OBJECT_DETECTION:
-                    Log.i(TAG, "Using Object Detector Processor");
-                    ObjectDetectorOptions objectDetectorOptions =
-                            PreferenceUtils.getObjectDetectorOptionsForLivePreview(this);
-                    cameraSource.setMachineLearningFrameProcessor(
-                            new ObjectDetectorProcessor(this, objectDetectorOptions));
-                    break;
-                case OBJECT_DETECTION_CUSTOM:
-                    Log.i(TAG, "Using Custom Object Detector Processor");
-                    LocalModel localModel =
-                            new LocalModel.Builder()
-                                    .setAssetFilePath("custom_models/bird_classifier.tflite")
-                                    .build();
-                    CustomObjectDetectorOptions customObjectDetectorOptions =
-                            PreferenceUtils.getCustomObjectDetectorOptionsForLivePreview(this, localModel);
-                    cameraSource.setMachineLearningFrameProcessor(
-                            new ObjectDetectorProcessor(this, customObjectDetectorOptions));
-                    break;
-
-                case FACE_RECOGNITION:
-                    Log.i(TAG, "Using Custom Object Detector Processor");
-                    LocalModel localModel_face_recog =
-                            new LocalModel.Builder()
-                                    .setAssetFilePath("custom_models/face_recog_classifier.tflite")
-                                    .build();
-                    CustomObjectDetectorOptions customObjectDetectorOptions_face_recog =
-                            PreferenceUtils.getCustomObjectDetectorOptionsForLivePreview(this, localModel_face_recog);
-                    mode.setMode(Constant.FACE_OPTION);
-                    cameraSource.setMachineLearningFrameProcessor(
-                            new ObjectDetectorProcessor(this, customObjectDetectorOptions_face_recog));
-
-                    break;
-                case TEXT_RECOGNITION:
-                    Log.i(TAG, "Using on-device Text recognition Processor");
-                    cameraSource.setMachineLearningFrameProcessor(new TextRecognitionProcessor(this));
-                    break;
-                case FACE_DETECTION:
-                    Log.i(TAG, "Using Face Detector Processor");
-                    FaceDetectorOptions faceDetectorOptions =
-                            PreferenceUtils.getFaceDetectorOptionsForLivePreview(this);
-                    cameraSource.setMachineLearningFrameProcessor(
-                            new FaceDetectorProcessor(this,   faceDetectorOptions,  mode.getMode()));
-                    break;
-                case BARCODE_SCANNING:
-                    Log.i(TAG, "Using Barcode Detector Processor");
-                    cameraSource.setMachineLearningFrameProcessor(new BarcodeScannerProcessor(this));
-                    break;
-                case IMAGE_LABELING:
-                    Log.i(TAG, "Using Image Label Detector Processor");
-                    cameraSource.setMachineLearningFrameProcessor(
-                            new LabelDetectorProcessor(this, ImageLabelerOptions.DEFAULT_OPTIONS));
-                    break;
-                case IMAGE_LABELING_CUSTOM:
-                    Log.i(TAG, "Using Custom Image Label Detector Processor");
-                    LocalModel localClassifier =
-                            new LocalModel.Builder()
-                                    .setAssetFilePath("custom_models/bird_classifier.tflite")
-                                    .build();
-                    CustomImageLabelerOptions customImageLabelerOptions =
-                            new CustomImageLabelerOptions.Builder(localClassifier).build();
-
-
-                    cameraSource.setMachineLearningFrameProcessor(
-                            new LabelDetectorProcessor(this, customImageLabelerOptions));
-                    break;
-
-
-                case FACE_AGE:
-                    Log.i(TAG, "Custom Age Detector Processor");
-                    LocalModel localClassifier_age =
-                            new LocalModel.Builder()
-                                    .setAssetFilePath("custom_models/face_age_classifier.tflite")
-                                    .build();
-                    customImageLabelerOptions =
-                            new CustomImageLabelerOptions.Builder(localClassifier_age).build();
-
-                    mode.setMode(Constant.AGE_OPTION);
-                    cameraSource.setMachineLearningFrameProcessor(
-                            new LabelDetectorProcessor(this, customImageLabelerOptions));
-                    break;
-
-
-                case FACE_EXPRESSION:
-                    Log.i(TAG, "Custom Age Detector Processor");
-                    LocalModel localClassifier_exp =
-                            new LocalModel.Builder()
-                                    .setAssetFilePath("custom_models/face_exp_classifier.tflite")
-                                    .build();
-                    customImageLabelerOptions =
-                            new CustomImageLabelerOptions.Builder(localClassifier_exp).build();
-                    mode.setMode(Constant.EXP_OPTION);
-                    cameraSource.setMachineLearningFrameProcessor(
-                            new LabelDetectorProcessor(this, customImageLabelerOptions));
-                    break;
-
-                case FACE_GENDER:
-                    Log.i(TAG, "Custom Age Detector Processor");
-                    LocalModel localClassifier_gender =
-                            new LocalModel.Builder()
-                                    .setAssetFilePath("custom_models/face_gender_classifier.tflite")
-                                    .build();
-                    customImageLabelerOptions =
-                            new CustomImageLabelerOptions.Builder(localClassifier_gender).build();
-                    mode.setMode(Constant.GENDER_OPTION);
-                    cameraSource.setMachineLearningFrameProcessor(
-                            new LabelDetectorProcessor(this, customImageLabelerOptions));
-                    break;
-
-                case AUTOML_LABELING:
-                    cameraSource.setMachineLearningFrameProcessor(
-                            new AutoMLImageLabelerProcessor(this));
-                    break;
-
-                case TEST_JSON:
-                    Log.i(TAG, "Test JSON");
-                    String[] input_JSON =  {"ff", "ff"};
-                    final String[] email = new String[1];
-
-                    //faceAPI.sendPost(constantURL.testURL, input_JSON  );
-                    Context currentContext = this;
-                    FaceAPIUtil asyncTask = new FaceAPIUtil(new URL(constantURL.testURL), new AsyncResponse() {
-                        @Override
-                        public void processFinish(String output) throws JSONException {
-                            //Here you will receive the result fired from async class
-                            //of onPostExecute(result) method.
-
-                            Log.e("output", output);
-                            JSONObject json = new JSONObject(output);
-                            email[0] = json.getString("email");
-                            Log.e("email",  email[0]);
-
-                            LocalModel localClassifier_gender =
-                                    new LocalModel.Builder()
-                                            .setAssetFilePath("custom_models/face_gender_classifier.tflite")
-                                            .build();
-                            CustomImageLabelerOptions customImageLabelerOptions2 =
-                                    new CustomImageLabelerOptions.Builder(localClassifier_gender).build();
-
-                            cameraSource.setMachineLearningFrameProcessor(
-                                    new LabelDetectorProcessor(currentContext, customImageLabelerOptions2,email[0]));
-                        }
-                    })
-
-                    asyncTask.execute(input_JSON);
-
-
-
-                    break;
-
-                default:
-                    Log.e(TAG, "Unknown model: " + model);
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Can not create image processor: " + model, e);
-            Toast.makeText(
-                    getApplicationContext(),
-                    "Can not create image processor: " + e.getMessage(),
-                    Toast.LENGTH_LONG)
-                    .show();
-        }
-    } */
 
 
     /**
